@@ -2,10 +2,10 @@ import React from 'react';
 import { NavLink } from "react-router-dom";
 import UserName from './UserName';
 
-const QuizOver = ({ close, setIsLoggedIn }) =>{
+const QuizOver = (props) =>{
     // get quiz results from local storage
-    const correctGuesses = localStorage.getItem('CorrectGuesses');
-    const guesses = localStorage.getItem("TotalGuesses");
+    const correctGuesses = sessionStorage.getItem('CorrectGuesses');
+    const guesses = sessionStorage.getItem("TotalGuesses");
 
     // calculate score 
     // less points given based on how many were wrong to how many guesses
@@ -16,8 +16,8 @@ const QuizOver = ({ close, setIsLoggedIn }) =>{
         score = 0;
     }
 
-    let isNameHere = localStorage.getItem("registerUser") || "";
-    localStorage.setItem('GameScore', JSON.stringify(score));
+    let isNameHere = sessionStorage.getItem("registerUser") || "";
+    sessionStorage.setItem('GameScore', JSON.stringify(score));
 
     // create date to store with score
     let today = new Date();
@@ -28,10 +28,10 @@ const QuizOver = ({ close, setIsLoggedIn }) =>{
     
     // Store game
     if (isNameHere) {
-        let oldGames = JSON.parse(localStorage.getItem(isNameHere)) || [];
+        let oldGames = JSON.parse(sessionStorage.getItem(isNameHere)) || [];
         let newGame = { score: score, date: today};
         oldGames.push(newGame);
-        localStorage.setItem( isNameHere, JSON.stringify(oldGames));
+        sessionStorage.setItem( isNameHere, JSON.stringify(oldGames));
     }
 
     return(
@@ -46,7 +46,7 @@ const QuizOver = ({ close, setIsLoggedIn }) =>{
                 <h4>Correct Guesses: {correctGuesses}</h4>
                 <h4>Total Guesses: {guesses}</h4>
                 <h3>Score: {isNaN(score) ? 0 : score}</h3>
-                <NavLink onClick={close} className="button" to="/Quiz">Close</NavLink>
+                <NavLink onClick={props.close} className="button" to="/Quiz">Close</NavLink>
             </div>
             <div className="signup_share">
                 {isNameHere ? null : (
@@ -54,7 +54,7 @@ const QuizOver = ({ close, setIsLoggedIn }) =>{
                         <h5>Brag to all your friends!</h5>
                         <h5>Sign up to save your scores:</h5>
                         {/* set user to be logged in */}
-                        <UserName setIsLoggedIn={setIsLoggedIn} />
+                        <UserName setIsLoggedIn={props.props.setIsLoggedIn} history={props.props.history} />
                     </div>    
                 )}
                 {/* help user post high score to Twitter */}
